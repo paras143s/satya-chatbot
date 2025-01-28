@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satya chatbot</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="chat-container">
+        <h1>𝐒𝐀𝐓𝐘𝐀 𝐁𝐨𝐓</h1>
+        <div id="chat-box" class="chat-box">
+            <!-- Chat messages will appear here -->
+        </div>
+        <div class="input">
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const chatBox = document.getElementById("chat-box");
+
+        function sendMessage() {
+            const userInput = document.getElementById("user-input");
+            const message = userInput.value.trim();
+            if (message === "") return;
+
+            // Display user message
+            chatBox.innerHTML += `<div class="user-message">You: ${message}</div>`;
+
+            // Send message to backend
+            fetch("/get_response", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ message })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display bot response
+                chatBox.innerHTML += `<div class="bot-message">Satya: ${data.response}</div>`;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+            userInput.value = ""; // Clear input field
+        }
+    </script>
+</body>
+</html>
